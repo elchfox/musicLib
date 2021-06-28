@@ -2,6 +2,7 @@
 import React , {useState,useEffect,useRef} from "react";
 import {Image,View,Text, FlatList,StyleSheet,TouchableOpacity} from 'react-native';
 import  Icon  from "react-native-vector-icons/FontAwesome5";
+import PopupItem from "../components/PopupItem";
 
 // import { Container, Tab, Tabs } from 'native-base';
 
@@ -32,6 +33,7 @@ let data = [
  const HomeScreen = ({navigation,route })=> {
        const [realData, setRealData] = useState(data)
        const [genres, setGeneres] = useState([])
+       const [moreOptionOn, setMoreOptionOn] = useState(null)
        const [typeSelset, setTypeSelset] = useState('All')
         useEffect(()=>{
           let setGeneresTemp = []
@@ -49,20 +51,25 @@ let data = [
        
     
       }
-      const moreOption = async(name) => {
-       
-       return (
-         <View>
-            <TouchableOpacity style={{padding:10}}>
-            <Text>Edit</Text>
-          </TouchableOpacity>
-            <TouchableOpacity style={{padding:10}}>
-            <Text>Delete</Text>
-          </TouchableOpacity>
-      </View>
-       )
-    
+      const onRemoved = async(name) => {
+        let indexOf = data.findIndex((e)=> e.title === name)
+        if(indexOf >= 0 ) {
+         let d =  data.splice(indexOf , 1 )
+          setRealData(data)
+        }
+        setMoreOptionOn(null)
       }
+      const onEdited = async(editName,name) => {
+        console.log(editName,name)
+        let indexOf = data.findIndex((e)=> e.artist === name)
+        console.log(indexOf)
+        if(indexOf >= 0 ) {
+         data[indexOf].artist = editName
+          setRealData([...data])
+        }
+        setMoreOptionOn(null)
+      }
+     
     
       return (
   
@@ -86,9 +93,13 @@ let data = [
                   numColumns={2}
                  renderItem={({item,index})=> 
                   <TouchableOpacity style={styles.album}>
-                        <TouchableOpacity style={{position:'absolute',top: 15,right:15}}>
-                        <Icon name={'ellipsis-v'} size={18}/>
-                        </TouchableOpacity>
+                      <TouchableOpacity 
+                      onPress={()=> setMoreOptionOn(item.artist)}
+                      style={{
+                          position:'absolute',top: 15,right:15,zIndex:2}}>
+                        <Icon name={'ellipsis-v'} size={20}/>
+                      </TouchableOpacity>
+                    
                     <Image source={{uri:item.cover}} style={{width:'100%', height:120, resizeMode:'cover'}}/>
                     <View style={[s.rowSpaceBetween,{padding:15}]}>
                       <Text>{item.artist}</Text>
@@ -97,6 +108,11 @@ let data = [
                   </TouchableOpacity> 
                 }
             />
+            
+              {moreOptionOn  !== null && <PopupItem name={moreOptionOn} 
+              onRemoved={(name)=> onRemoved(name)}
+              onEdited={(name)=> onEdited(name,moreOptionOn)}
+              />}
       </View>
       );
     }
@@ -108,6 +124,7 @@ export default HomeScreen
 const styles = StyleSheet.create({
  
   album: {
+    position:'relative',
     flexWrap:'wrap',
                       marginBottom:15,
                       borderRadius:20,
