@@ -85,10 +85,10 @@ let data = [
                  </TouchableOpacity>}
             />
                  <FlatList data={realData}
-                      contentContainerStyle={{flexWrap:'wrap', 
-                      padding:15,
+                      columnWrapperStyle={{ 
                       justifyContent:'space-between',
-                      flexDirection : "row"}}
+                      }}
+                      style={{padding:15}}
 
                   numColumns={2}
                  renderItem={({item,index})=> 
@@ -125,11 +125,9 @@ const styles = StyleSheet.create({
  
   album: {
     position:'relative',
-    flexWrap:'wrap',
-                      marginBottom:15,
                       borderRadius:20,
-                      width:(SIZES.width / 2) - 30,
-                      marginHorizontal:7.5,
+                      marginBottom:15,
+                      width:"48%",
                       overflow:'hidden',
                       backgroundColor:"white"         
   },
